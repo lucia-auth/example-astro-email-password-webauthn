@@ -1,0 +1,29 @@
+---
+if (Astro.locals.user === null || Astro.locals.session === null) {
+	return Astro.redirect("/login");
+}
+if (!Astro.locals.user.emailVerified) {
+	return Astro.redirect("/verify-email");
+}
+if (Astro.locals.user.registered2FA) {
+	return Astro.redirect("/");
+}
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Email and password example with 2FA and WebAuthn in Astro</title>
+	</head>
+	<body>
+		<main>
+			<h1>Set up two-factor authentication</h1>
+			<ul>
+				<li><a href="/2fa/totp/setup">Authenticator apps</a></li>
+				<li><a href="/2fa/passkey/register">Passkeys</a></li>
+				<li><a href="/2fa/security-key/register">Security keys</a></li>
+			</ul>
+		</main>
+	</body>
+</html>

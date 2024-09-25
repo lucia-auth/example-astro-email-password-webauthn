@@ -1,0 +1,45 @@
+---
+import { get2FARedirect } from "@lib/server/2fa";
+
+if (Astro.locals.user === null || Astro.locals.session === null) {
+	return Astro.redirect("/login");
+}
+if (!Astro.locals.user.emailVerified) {
+	return Astro.redirect("/verify-email");
+}
+if (!Astro.locals.user.registered2FA) {
+	return Astro.redirect("/2fa/setup");
+}
+if (!Astro.locals.session.twoFactorVerified) {
+	return Astro.redirect(get2FARedirect(Astro.locals.user));
+}
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Email and password example with 2FA and WebAuthn in Astro</title>
+	</head>
+	<body>
+		<header>
+			<a href="/">Home</a>
+			<a href="/settings">Settings</a>
+		</header>
+		<main>
+			<h1>Hi {Astro.locals.user.username}!</h1>
+			<button id="button-logout">Sign out</button>
+		</main>
+	</body>
+</html>
+
+<script>
+	const logoutButtonElement = document.getElementById("button-logout") as HTMLButtonElement;
+
+	logoutButtonElement.addEventListener("click", async () => {
+		await fetch("/api/session", {
+			method: "DELETE"
+		});
+		window.location.href = "/login";
+	});
+</script>
