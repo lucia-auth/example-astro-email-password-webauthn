@@ -28,15 +28,18 @@ if (!Astro.locals.session.twoFactorVerified) {
 		</header>
 		<main>
 			<h1>Hi {Astro.locals.user.username}!</h1>
-			<button id="button-logout">Sign out</button>
+			<form id="form-logout">
+				<button>Sign out</button>
+			</form>
 		</main>
 	</body>
 </html>
 
 <script>
-	const logoutButtonElement = document.getElementById("button-logout") as HTMLButtonElement;
+	const logoutForm = document.getElementById("form-logout") as HTMLFormElement;
 
-	logoutButtonElement.addEventListener("click", async () => {
+	logoutForm.addEventListener("submit", async (e) => {
+		e.preventDefault();
 		await fetch("/api/session", {
 			method: "DELETE"
 		});
