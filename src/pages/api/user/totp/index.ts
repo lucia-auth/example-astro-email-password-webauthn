@@ -49,7 +49,14 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 400
 		});
 	}
-	const key = decodeBase64(encodedKey);
+	let key: Uint8Array;
+	try {
+		key = decodeBase64(encodedKey);
+	} catch {
+		return new Response("Invalid key", {
+			status: 400
+		});
+	}
 	if (key.byteLength !== 20) {
 		return new Response("Invalid key", {
 			status: 400
