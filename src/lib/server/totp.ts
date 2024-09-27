@@ -1,9 +1,8 @@
 import { db } from "./db";
 import { decrypt, encrypt } from "./encryption";
-import { ConstantRefillTokenBucket, FixedRefillTokenBucket } from "./rate-limit";
+import { ExpiringTokenBucket } from "./rate-limit";
 
-export const totpUpdateBucket = new ConstantRefillTokenBucket<number>(5, 60);
-export const totpBucket = new FixedRefillTokenBucket<number>(5, 60 * 30);
+export const totpBucket = new ExpiringTokenBucket<number>(5, 60 * 30);
 
 export function getUserTOTPKey(userId: number): Uint8Array | null {
 	const row = db.queryOne("SELECT totp_credential.key FROM totp_credential WHERE user_id = ?", [userId]);

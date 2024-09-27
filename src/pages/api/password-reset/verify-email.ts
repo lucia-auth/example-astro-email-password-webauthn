@@ -3,12 +3,12 @@ import {
 	setPasswordResetSessionAsEmailVerified
 } from "@lib/server/password-reset";
 import { ObjectParser } from "@pilcrowjs/object-parser";
-import { FixedRefillTokenBucket } from "@lib/server/rate-limit";
+import { ExpiringTokenBucket } from "@lib/server/rate-limit";
 import { setUserAsEmailVerifiedIfEmailMatches } from "@lib/server/user";
 
 import type { APIContext } from "astro";
 
-const bucket = new FixedRefillTokenBucket<number>(5, 60 * 30);
+const bucket = new ExpiringTokenBucket<number>(5, 60 * 30);
 
 export async function POST(context: APIContext): Promise<Response> {
 	const { session } = validatePasswordResetSessionRequest(context);
@@ -17,11 +17,17 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 401
 		});
 	}
+	if (!bucket.check(session.userId, 1)) {
+		return new Response("Too many requests", {
+			status: 429
+		});
+	}
 	if (session.emailVerified) {
 		return new Response("Already verified", {
 			status: 400
 		});
 	}
+
 	const data = await context.request.json();
 	const parser = new ObjectParser(data);
 	let code: string;
@@ -37,7 +43,7 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 401
 		});
 	}
-	if (!bucket.check(session.userId, 1)) {
+	if (!bucket.consume(session.userId, 1)) {
 		return new Response("Too many requests", {
 			status: 429
 		});

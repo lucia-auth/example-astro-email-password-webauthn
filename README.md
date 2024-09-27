@@ -47,3 +47,5 @@ pnpm dev
 - Astro warns about unused functions (`get2FARedirect()`) but this is a bug with the language server.
 - TODO: You may need to rewrite some queries and use transactions to avoid race conditions when using MySQL, Postgres, etc.
 - TODO: Users are not shown their recovery code when they first register their second factor.
+- TODO: This project relies on the `X-Forwarded-For` header for getting the client's IP address.
+- TODO: Logging should be implemented.

@@ -14,6 +14,12 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 401
 		});
 	}
+	if (!recoveryCodeBucket.check(context.locals.user.id, 1)) {
+		return new Response("Too many requests", {
+			status: 429
+		});
+	}
+
 	const data: unknown = await context.request.json();
 	const parser = new ObjectParser(data);
 	let code: string;
@@ -29,7 +35,7 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 401
 		});
 	}
-	if (!recoveryCodeBucket.check(context.locals.user.id, 1)) {
+	if (!recoveryCodeBucket.consume(context.locals.user.id, 1)) {
 		return new Response("Too many requests", {
 			status: 429
 		});

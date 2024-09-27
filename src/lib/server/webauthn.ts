@@ -1,10 +1,7 @@
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { db } from "./db";
-import { ConstantRefillTokenBucket } from "./rate-limit";
 
 const challengeBucket = new Set<string>();
-
-export const webauthnChallengeRateLimitBucket = new ConstantRefillTokenBucket(30, 10);
 
 export function createWebAuthnChallenge(): Uint8Array {
 	const challenge = new Uint8Array(20);

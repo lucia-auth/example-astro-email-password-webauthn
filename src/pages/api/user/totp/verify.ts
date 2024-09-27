@@ -19,7 +19,7 @@ export async function POST(context: APIContext): Promise<Response> {
 	}
 	if (!context.locals.user.registeredTOTP) {
 		return new Response(null, {
-			status: 400
+			status: 403
 		});
 	}
 	if (!totpBucket.check(context.locals.user.id, 1)) {
@@ -44,8 +44,8 @@ export async function POST(context: APIContext): Promise<Response> {
 	}
 	const totpKey = getUserTOTPKey(context.locals.user.id);
 	if (totpKey === null) {
-		return new Response("Please set up two-factor authentication.", {
-			status: 400
+		return new Response(null, {
+			status: 403
 		});
 	}
 	if (!verifyTOTP(totpKey, 30, 6, code)) {

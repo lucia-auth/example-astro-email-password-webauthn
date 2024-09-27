@@ -3,9 +3,11 @@ import { verifyTOTP } from "@oslojs/otp";
 import { deleteUserTOTPKey, updateUserTOTPKey } from "@lib/server/totp";
 import { ObjectParser } from "@pilcrowjs/object-parser";
 import { setSessionAs2FAVerified } from "@lib/server/session";
-import { totpUpdateBucket } from "@lib/server/totp";
+import { RefillingTokenBucket } from "@lib/server/rate-limit";
 
 import type { APIContext } from "astro";
+
+const totpUpdateBucket = new RefillingTokenBucket<number>(3, 60 * 10);
 
 export async function POST(context: APIContext): Promise<Response> {
 	if (context.locals.session === null || context.locals.user === null) {
@@ -88,7 +90,7 @@ export async function DELETE(context: APIContext): Promise<Response> {
 			status: 401
 		});
 	}
-	if (!totpUpdateBucket.check(context.locals.user.id, 1)) {
+	if (!totpUpdateBucket.consume(context.locals.user.id, 1)) {
 		return new Response("Too many requests", {
 			status: 429
 		});
