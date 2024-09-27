@@ -74,6 +74,7 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 400
 		});
 	}
+	// TODO: Update host
 	if (!authenticatorData.verifyRelyingPartyIdHash("localhost")) {
 		return new Response("Invalid data", {
 			status: 400
@@ -104,6 +105,7 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 400
 		});
 	}
+	// TODO: Update origin
 	if (clientData.origin !== "http://localhost:4321") {
 		return new Response("Invalid data", {
 			status: 400

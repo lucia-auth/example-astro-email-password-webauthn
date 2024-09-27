@@ -45,6 +45,7 @@ pnpm dev
 - This example does not handle unexpected errors gracefully.
 - There are some major code duplications (specifically for 2FA) to keep the codebase simple.
 - Astro warns about unused functions (`get2FARedirect()`) but this is a bug with the language server.
+- TODO: Passkeys will only work when hosted on `localhost:4321`. Update the host and origin values before deploying.
 - TODO: You may need to rewrite some queries and use transactions to avoid race conditions when using MySQL, Postgres, etc.
 - TODO: Users are not shown their recovery code when they first register their second factor.
 - TODO: This project relies on the `X-Forwarded-For` header for getting the client's IP address.
