@@ -20,18 +20,18 @@ import type { ClientData, AuthenticatorData } from "@oslojs/webauthn";
 // Stricter rate limiting can be omitted here since creating challenges are rate-limited
 export async function POST(context: APIContext): Promise<Response> {
 	if (context.locals.session === null || context.locals.user === null) {
-		return new Response(null, {
+		return new Response("Not authenticated", {
 			status: 401
 		});
 	}
 	if (!context.locals.user.emailVerified) {
-		return new Response(null, {
-			status: 401
+		return new Response("Forbidden", {
+			status: 403
 		});
 	}
 	if (!context.locals.user.registeredPasskey) {
-		return new Response(null, {
-			status: 400
+		return new Response("Forbidden", {
+			status: 403
 		});
 	}
 

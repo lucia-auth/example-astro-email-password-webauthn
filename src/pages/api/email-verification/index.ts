@@ -11,13 +11,13 @@ import type { APIContext } from "astro";
 
 export async function POST(context: APIContext): Promise<Response> {
 	if (context.locals.session === null || context.locals.user === null) {
-		return new Response(null, {
+		return new Response("Not authenticated", {
 			status: 401
 		});
 	}
 	if (context.locals.user.registered2FA && !context.locals.session.twoFactorVerified) {
-		return new Response(null, {
-			status: 401
+		return new Response("Forbidden", {
+			status: 403
 		});
 	}
 	if (!sendVerificationEmailBucket.check(context.locals.user.id, 1)) {
@@ -38,18 +38,18 @@ export async function POST(context: APIContext): Promise<Response> {
 	}
 	if (email === "") {
 		return new Response("Please enter your email", {
-			status: 401
+			status: 400
 		});
 	}
 	if (!verifyEmailInput(email)) {
 		return new Response("Please enter a valid email", {
-			status: 401
+			status: 400
 		});
 	}
 	const emailAvailable = checkEmailAvailability(email);
 	if (!emailAvailable) {
 		return new Response("This email is already used", {
-			status: 401
+			status: 400
 		});
 	}
 	if (!sendVerificationEmailBucket.consume(context.locals.user.id, 1)) {

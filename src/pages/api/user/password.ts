@@ -13,13 +13,13 @@ import type { SessionFlags } from "@lib/server/session";
 
 export async function PATCH(context: APIContext): Promise<Response> {
 	if (context.locals.user === null || context.locals.session === null) {
-		return new Response(null, {
+		return new Response("Not authenticated", {
 			status: 401
 		});
 	}
 	if (context.locals.user.registered2FA && !context.locals.session.twoFactorVerified) {
-		return new Response(null, {
-			status: 401
+		return new Response("Forbidden", {
+			status: 403
 		});
 	}
 	const data = await context.request.json();
@@ -43,7 +43,7 @@ export async function PATCH(context: APIContext): Promise<Response> {
 	const validPassword = await verifyPasswordHash(passwordHash, password);
 	if (!validPassword) {
 		return new Response("Incorrect password", {
-			status: 401
+			status: 400
 		});
 	}
 

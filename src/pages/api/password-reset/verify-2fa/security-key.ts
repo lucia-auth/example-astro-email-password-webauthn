@@ -20,12 +20,12 @@ import type { ClientData, AuthenticatorData } from "@oslojs/webauthn";
 export async function POST(context: APIContext): Promise<Response> {
 	const { session, user } = validatePasswordResetSessionRequest(context);
 	if (session === null) {
-		return new Response(null, {
+		return new Response("Not authenticated", {
 			status: 401
 		});
 	}
 	if (!session.emailVerified || !user.registered2FA) {
-		return new Response(null, {
+		return new Response("Forbidden", {
 			status: 403
 		});
 	}

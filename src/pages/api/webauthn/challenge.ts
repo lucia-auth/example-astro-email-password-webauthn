@@ -10,7 +10,7 @@ export async function POST(context: APIContext): Promise<Response> {
 	// TODO: Assumes X-Forwarded-For is always included.
 	const clientIP = context.request.headers.get("X-Forwarded-For");
 	if (clientIP !== null && !webauthnChallengeRateLimitBucket.consume(clientIP, 1)) {
-		return new Response(null, {
+		return new Response("Too many requests", {
 			status: 429
 		});
 	}

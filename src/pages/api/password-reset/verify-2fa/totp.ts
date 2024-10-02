@@ -9,12 +9,12 @@ import type { APIContext } from "astro";
 export async function POST(context: APIContext): Promise<Response> {
 	const { session, user } = validatePasswordResetSessionRequest(context);
 	if (session === null) {
-		return new Response(null, {
+		return new Response("Not authenticated", {
 			status: 401
 		});
 	}
 	if (!session.emailVerified || !user.registered2FA) {
-		return new Response(null, {
+		return new Response("Forbidden", {
 			status: 403
 		});
 	}
@@ -36,13 +36,13 @@ export async function POST(context: APIContext): Promise<Response> {
 	}
 	if (code === "") {
 		return new Response("Please enter your code", {
-			status: 401
+			status: 400
 		});
 	}
 	const totpKey = getUserTOTPKey(session.userId);
 	if (totpKey === null) {
-		return new Response("", {
-			status: 400
+		return new Response("Forbidden", {
+			status: 403
 		});
 	}
 	if (!totpBucket.consume(session.userId, 1)) {

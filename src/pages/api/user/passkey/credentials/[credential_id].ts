@@ -6,18 +6,18 @@ import type { APIContext } from "astro";
 export async function DELETE(context: APIContext): Promise<Response> {
 	const encodedCredentialId = context.params.id as string;
 	if (context.locals.user === null || context.locals.session === null) {
-		return new Response(null, {
+		return new Response("Not authenticated", {
 			status: 401
 		});
 	}
 	if (!context.locals.user.emailVerified) {
-		return new Response(null, {
-			status: 401
+		return new Response("Forbidden", {
+			status: 403
 		});
 	}
 	if (context.locals.user.registered2FA && !context.locals.session.twoFactorVerified) {
-		return new Response(null, {
-			status: 401
+		return new Response("Forbidden", {
+			status: 403
 		});
 	}
 	let credentialId: Uint8Array;

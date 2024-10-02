@@ -13,7 +13,7 @@ const bucket = new ExpiringTokenBucket<number>(5, 60 * 30);
 export async function POST(context: APIContext): Promise<Response> {
 	const { session } = validatePasswordResetSessionRequest(context);
 	if (session === null) {
-		return new Response(null, {
+		return new Response("Not authenticated", {
 			status: 401
 		});
 	}
@@ -40,7 +40,7 @@ export async function POST(context: APIContext): Promise<Response> {
 	}
 	if (code === "") {
 		return new Response("Please enter your code", {
-			status: 401
+			status: 400
 		});
 	}
 	if (!bucket.consume(session.userId, 1)) {
@@ -50,7 +50,7 @@ export async function POST(context: APIContext): Promise<Response> {
 	}
 	if (code !== session.code) {
 		return new Response("Incorrect code", {
-			status: 401
+			status: 400
 		});
 	}
 	bucket.reset(session.userId);

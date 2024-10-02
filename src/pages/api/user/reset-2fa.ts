@@ -5,13 +5,13 @@ import type { APIContext } from "astro";
 
 export async function POST(context: APIContext): Promise<Response> {
 	if (context.locals.session === null || context.locals.user === null) {
-		return new Response(null, {
+		return new Response("Not authenticated", {
 			status: 401
 		});
 	}
 	if (!context.locals.user.emailVerified || !context.locals.user.registered2FA) {
-		return new Response(null, {
-			status: 401
+		return new Response("Forbidden", {
+			status: 403
 		});
 	}
 	if (!recoveryCodeBucket.check(context.locals.user.id, 1)) {
@@ -32,7 +32,7 @@ export async function POST(context: APIContext): Promise<Response> {
 	}
 	if (code === "") {
 		return new Response("Please enter your code", {
-			status: 401
+			status: 400
 		});
 	}
 	if (!recoveryCodeBucket.consume(context.locals.user.id, 1)) {
