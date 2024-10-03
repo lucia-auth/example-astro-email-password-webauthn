@@ -15,11 +15,11 @@ if (!session.emailVerified) {
 if (!user.registered2FA) {
 	return Astro.redirect("/reset-password");
 }
-if (!user.registeredPasskey) {
-	return Astro.redirect(getPasswordReset2FARedirect(user));
-}
 if (session.twoFactorVerified) {
 	return Astro.redirect("/reset-password");
+}
+if (!user.registeredPasskey) {
+	return Astro.redirect(getPasswordReset2FARedirect(user));
 }
 
 const credentials = getUserPasskeyCredentials(user.id);
