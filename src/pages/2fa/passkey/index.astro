@@ -38,7 +38,7 @@ const encodedCredentialUserId = credentials.map((c) => encodeBase64(c.id)).join(
 			</div>
 			<a href="/2fa/reset">Use recovery code</a>
 			{Astro.locals.user.registeredTOTP && <a href="/2fa/totp">Use authenticator apps</a>}
-			{Astro.locals.user.registeredSecurityKey && <a href="/2fa/passkey">Use security keys</a>}
+			{Astro.locals.user.registeredSecurityKey && <a href="/2fa/security-key">Use security keys</a>}
 		</main>
 	</body>
 	<input type="hidden" id="credential_ids" value={encodedCredentialUserId} />
