@@ -1,16 +1,15 @@
-import { get2FARedirect } from "@lib/server/2fa";
+import { getPasswordReset2FARedirect } from "@lib/server/2fa";
+import { validatePasswordResetSessionRequest } from "@lib/server/password-reset";
 
 import type { APIContext } from "astro";
 
 export function GET(context: APIContext): Response {
-	if (context.locals.session === null || context.locals.user === null) {
+	const { session, user } = validatePasswordResetSessionRequest(context);
+	if (session === null) {
 		return context.redirect("/login");
 	}
-	if (context.locals.session.twoFactorVerified) {
+	if (!user.registered2FA || session.twoFactorVerified) {
 		return context.redirect("/");
 	}
-	if (!context.locals.user.registered2FA) {
-		return context.redirect("/2fa/setup");
-	}
-	return context.redirect(get2FARedirect(context.locals.user));
+	return context.redirect(getPasswordReset2FARedirect(user));
 }

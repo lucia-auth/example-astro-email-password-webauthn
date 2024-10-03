@@ -1,4 +1,5 @@
 ---
+import { getPasswordReset2FARedirect } from "@lib/server/2fa";
 import { validatePasswordResetSessionRequest } from "@lib/server/password-reset";
 
 const { session, user } = validatePasswordResetSessionRequest(Astro);
@@ -9,7 +10,7 @@ if (!session.emailVerified) {
 	return Astro.redirect("/reset-password/verify-email");
 }
 if (user.registered2FA && !session.twoFactorVerified) {
-	return Astro.redirect("/reset-password/2fa");
+	return Astro.redirect(getPasswordReset2FARedirect(user));
 }
 ---
 
