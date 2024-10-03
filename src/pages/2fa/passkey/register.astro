@@ -1,6 +1,6 @@
 ---
 import { get2FARedirect } from "@lib/server/2fa";
-import { getUserSecurityKeyCredentials } from "@lib/server/webauthn";
+import { getUserPasskeyCredentials } from "@lib/server/webauthn";
 import { bigEndian } from "@oslojs/binary";
 import { encodeBase64 } from "@oslojs/encoding";
 
@@ -14,7 +14,7 @@ if (Astro.locals.user.registered2FA && !Astro.locals.session.twoFactorVerified) 
 	return Astro.redirect(get2FARedirect(Astro.locals.user));
 }
 
-const credentials = getUserSecurityKeyCredentials(Astro.locals.user.id);
+const credentials = getUserPasskeyCredentials(Astro.locals.user.id);
 const encodedCredentialIds = credentials.map((c) => encodeBase64(c.id)).join(",");
 
 const credentialUserId = new Uint8Array(8);
