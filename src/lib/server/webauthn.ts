@@ -79,8 +79,9 @@ export function createPasskeyCredential(credential: WebAuthnUserCredential): voi
 	]);
 }
 
-export function deletePasskeyCredential(credentialId: Uint8Array): void {
-	db.execute("DELETE FROM passkey_credential WHERE id = ?", [credentialId]);
+export function deleteUserPasskeyCredential(userId: number, credentialId: Uint8Array): boolean {
+	const result = db.execute("DELETE FROM passkey_credential WHERE id = ? AND user_id = ?", [credentialId, userId]);
+	return result.changes > 0;
 }
 
 export function getUserSecurityKeyCredentials(userId: number): WebAuthnUserCredential[] {
@@ -130,8 +131,9 @@ export function createSecurityKeyCredential(credential: WebAuthnUserCredential):
 	]);
 }
 
-export function deleteSecurityKeyCredential(credentialId: Uint8Array): void {
-	db.execute("DELETE FROM security_key_credential WHERE id = ?", [credentialId]);
+export function deleteUserSecurityKeyCredential(userId: number, credentialId: Uint8Array): boolean {
+	const result = db.execute("DELETE FROM security_key_credential WHERE id = ? AND user_id = ?", [credentialId, userId]);
+	return result.changes > 0;
 }
 
 export interface WebAuthnUserCredential {

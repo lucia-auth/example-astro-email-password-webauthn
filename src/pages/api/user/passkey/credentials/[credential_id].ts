@@ -1,4 +1,4 @@
-import { deletePasskeyCredential, getUserPasskeyCredential } from "@lib/server/webauthn";
+import { deleteUserPasskeyCredential } from "@lib/server/webauthn";
 import { decodeBase64urlIgnorePadding } from "@oslojs/encoding";
 
 import type { APIContext } from "astro";
@@ -28,13 +28,12 @@ export async function DELETE(context: APIContext): Promise<Response> {
 			status: 404
 		});
 	}
-	const credential = getUserPasskeyCredential(context.locals.user.id, credentialId);
-	if (credential === null) {
+	const deleted = deleteUserPasskeyCredential(context.locals.user.id, credentialId);
+	if (!deleted) {
 		return new Response(null, {
 			status: 404
 		});
 	}
-	deletePasskeyCredential(credentialId);
 	return new Response(null, {
 		status: 204
 	});
