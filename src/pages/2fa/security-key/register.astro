@@ -38,11 +38,11 @@ const encodedCredentialUserId = encodeBase64(credentialUserId);
 				<button disabled id="form-register-credential.button">Continue</button>
 				<p id="form-register-credential.message"></p>
 			</form>
-			<input type="hidden" id="credential-display-name" value={Astro.locals.user.username} />
-			<input type="hidden" id="credential-name" value={Astro.locals.user.email} />
-			<input type="hidden" id="credential_user_id" value={encodedCredentialUserId} />
 		</main>
 	</body>
+	<input type="hidden" id="credential-display-name" value={Astro.locals.user.username} />
+	<input type="hidden" id="credential-name" value={Astro.locals.user.email} />
+	<input type="hidden" id="credential_user_id" value={encodedCredentialUserId} />
 	<input type="hidden" id="credential_ids" value={encodedCredentialIds} />
 </html>
 
