@@ -80,7 +80,7 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 400
 		});
 	}
-	if (!authenticatorData.userPresent || !authenticatorData.userVerified) {
+	if (!authenticatorData.userPresent) {
 		return new Response("Invalid data", {
 			status: 400
 		});
