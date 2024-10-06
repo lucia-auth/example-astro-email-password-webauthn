@@ -20,18 +20,34 @@ export async function POST(context: APIContext): Promise<Response> {
 		});
 	}
 
-	let verificationRequest = getUserEmailVerificationRequestFromRequest(context);
-	if (verificationRequest === null) {
-		return new Response("Forbidden", {
-			status: 403
-		});
-	}
 	if (!sendVerificationEmailBucket.check(context.locals.user.id, 1)) {
 		return new Response("Too many requests", {
 			status: 429
 		});
 	}
-	verificationRequest = createEmailVerificationRequest(verificationRequest.userId, verificationRequest.email);
+
+	let verificationRequest = getUserEmailVerificationRequestFromRequest(context);
+	if (verificationRequest === null) {
+		if (context.locals.user.emailVerified) {
+			return new Response("Forbidden", {
+				status: 403
+			});
+		}
+		if (!sendVerificationEmailBucket.consume(context.locals.user.id, 1)) {
+			return new Response("Too many requests", {
+				status: 429
+			});
+		}
+		verificationRequest = createEmailVerificationRequest(context.locals.user.id, context.locals.user.email);
+	} else {
+		if (!sendVerificationEmailBucket.consume(context.locals.user.id, 1)) {
+			return new Response("Too many requests", {
+				status: 429
+			});
+		}
+		verificationRequest = createEmailVerificationRequest(context.locals.user.id, verificationRequest.email);
+	}
+
 	sendVerificationEmail(verificationRequest.email, verificationRequest.code);
 	setEmailVerificationRequestCookie(context, verificationRequest);
 	return new Response(null, { status: 204 });
