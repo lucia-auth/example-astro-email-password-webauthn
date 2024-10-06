@@ -25,11 +25,6 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 403
 		});
 	}
-	if (context.locals.user.registeredTOTP) {
-		return new Response("Forbidden", {
-			status: 403
-		});
-	}
 
 	if (!totpUpdateBucket.check(context.locals.user.id, 1)) {
 		return new Response("Too many requests", {
