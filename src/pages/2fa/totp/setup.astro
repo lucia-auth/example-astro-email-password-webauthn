@@ -13,6 +13,9 @@ if (!Astro.locals.user.emailVerified) {
 if (Astro.locals.user.registeredTOTP && !Astro.locals.session.twoFactorVerified) {
 	return Astro.redirect(get2FARedirect(Astro.locals.user));
 }
+if (Astro.locals.user.registeredTOTP) {
+	return Astro.redirect("/");
+}
 
 const totpKey = new Uint8Array(20);
 crypto.getRandomValues(totpKey);
