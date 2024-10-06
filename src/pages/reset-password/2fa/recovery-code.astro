@@ -32,9 +32,6 @@ if (session.twoFactorVerified) {
 				<button>Verify</button>
 				<p id="form-recovery-code.message"></p>
 			</form>
-			{user.registeredSecurityKey && <a href="/reset-password/2fa/security-key">Use security keys</a>}
-			{user.registeredPasskey && <a href="/reset-password/2fa/passkey">Use passkeys</a>}
-			{user.registeredTOTP && <a href="/reset-password/2fa/totp">Use authenticator apps</a>}
 		</main>
 	</body>
 </html>
