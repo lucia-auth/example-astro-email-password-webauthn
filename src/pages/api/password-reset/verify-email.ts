@@ -17,14 +17,14 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 401
 		});
 	}
+	if (session.emailVerified) {
+		return new Response("Forbidden", {
+			status: 403
+		});
+	}
 	if (!bucket.check(session.userId, 1)) {
 		return new Response("Too many requests", {
 			status: 429
-		});
-	}
-	if (session.emailVerified) {
-		return new Response("Already verified", {
-			status: 400
 		});
 	}
 

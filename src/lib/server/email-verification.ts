@@ -23,7 +23,6 @@ export function getUserEmailVerificationRequest(userId: number, id: string): Ema
 	return request;
 }
 
-
 export function createEmailVerificationRequest(userId: number, email: string): EmailVerificationRequest {
 	deleteUserEmailVerificationRequest(userId);
 	const idBytes = new Uint8Array(20);

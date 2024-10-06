@@ -24,11 +24,12 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 401
 		});
 	}
-	if (!session.emailVerified || !user.registered2FA) {
+	if (!session.emailVerified || !user.registeredSecurityKey || session.twoFactorVerified) {
 		return new Response("Forbidden", {
 			status: 403
 		});
 	}
+
 	const data: unknown = await context.request.json();
 	const parser = new ObjectParser(data);
 	let encodedAuthenticatorData: string;

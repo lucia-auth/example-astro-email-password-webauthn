@@ -13,7 +13,7 @@ export async function POST(context: APIContext): Promise<Response> {
 			status: 401
 		});
 	}
-	if (!session.emailVerified || !user.registered2FA) {
+	if (!session.emailVerified || !user.registeredTOTP || session.twoFactorVerified) {
 		return new Response("Forbidden", {
 			status: 403
 		});
