@@ -7,9 +7,12 @@ import {
 	invalidateUserSessions,
 	setSessionTokenCookie
 } from "@lib/server/session";
+import { ExpiringTokenBucket } from "@lib/server/rate-limit";
 
 import type { APIContext } from "astro";
 import type { SessionFlags } from "@lib/server/session";
+
+const bucket = new ExpiringTokenBucket<string>(5, 60 * 30);
 
 export async function PATCH(context: APIContext): Promise<Response> {
 	if (context.locals.user === null || context.locals.session === null) {
@@ -22,6 +25,12 @@ export async function PATCH(context: APIContext): Promise<Response> {
 			status: 403
 		});
 	}
+	if (!bucket.check(context.locals.session.id, 1)) {
+		return new Response("Too many requests", {
+			status: 429
+		});
+	}
+
 	const data = await context.request.json();
 	const parser = new ObjectParser(data);
 	let password: string, newPassword: string;
@@ -39,6 +48,11 @@ export async function PATCH(context: APIContext): Promise<Response> {
 			status: 400
 		});
 	}
+	if (!bucket.consume(context.locals.session.id, 1)) {
+		return new Response("Too many requests", {
+			status: 429
+		});
+	}
 	const passwordHash = getUserPasswordHash(context.locals.user.id);
 	const validPassword = await verifyPasswordHash(passwordHash, password);
 	if (!validPassword) {
@@ -46,7 +60,7 @@ export async function PATCH(context: APIContext): Promise<Response> {
 			status: 400
 		});
 	}
-
+	bucket.reset(context.locals.session.id);
 	invalidateUserSessions(context.locals.user.id);
 	await updateUserPassword(context.locals.user.id, newPassword);
 
