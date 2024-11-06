@@ -4,7 +4,7 @@ import { decodeBase64urlIgnorePadding } from "@oslojs/encoding";
 import type { APIContext } from "astro";
 
 export async function DELETE(context: APIContext): Promise<Response> {
-	const encodedCredentialId = context.params.id as string;
+	const encodedCredentialId = context.params.credential_id as string;
 	if (context.locals.user === null || context.locals.session === null) {
 		return new Response("Not authenticated", {
 			status: 401
